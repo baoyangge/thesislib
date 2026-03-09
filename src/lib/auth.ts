@@ -10,8 +10,13 @@ export async function requireUser() {
 
 export async function signUp(email: string, password: string) {
   const hashed = await bcrypt.hash(password, 10);
+  const adminEmail = (process.env.ADMIN_EMAIL || "").trim().toLowerCase();
   const user = await prisma.user.create({
-    data: { email, password: hashed },
+    data: {
+      email,
+      password: hashed,
+      isAdmin: adminEmail ? email.toLowerCase() === adminEmail : false,
+    },
   });
   const session = await getSession();
   session.userId = user.id;
