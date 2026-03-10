@@ -32,7 +32,11 @@ export default async function PapersPage({
     where,
     orderBy: mine ? { createdAt: "desc" } : { viewCount: "desc" },
     take: 50,
-    include: { category: true, file: true },
+    include: {
+      category: true,
+      file: true,
+      reviews: { orderBy: { createdAt: "desc" }, take: 1 },
+    },
   });
 
   return (
@@ -73,15 +77,37 @@ export default async function PapersPage({
         </div>
 
         <div className="space-y-3">
-          {papers.map((p) => (
-            <div key={p.id} className="rounded border border-zinc-200 bg-white p-4">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <div className="font-medium">{p.title}</div>
-                  <div className="text-xs text-zinc-500">
-                    分类：{p.category?.slug || "-"} · 状态：{p.status} · 浏览：{p.viewCount}
+          {papers.map((p) => {
+            const latest = p.reviews[0];
+            const statusCn: Record<string, string> = {
+              SUBMITTED: "已提交",
+              UNDER_REVIEW: "审核中",
+              APPROVED: "已通过",
+              REJECTED: "已拒绝",
+            };
+
+            return (
+              <div key={p.id} className="rounded border border-zinc-200 bg-white p-4">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <div className="font-medium">{p.title}</div>
+                    <div className="text-xs text-zinc-500">
+                      分类：{p.category?.slug || "-"} · 状态：{statusCn[p.status] || p.status} · 浏览：{p.viewCount}
+                    </div>
+                    {mine ? (
+                      <div className="mt-1 text-xs text-zinc-600">
+                        最近审核：
+                        {latest ? (
+                          <span>
+                            {latest.decision ? statusCn[String(latest.decision)] || String(latest.decision) : "-"}
+                            {latest.note ? `（${latest.note}）` : ""} · {new Date(latest.createdAt).toLocaleString()}
+                          </span>
+                        ) : (
+                          <span>暂无</span>
+                        )}
+                      </div>
+                    ) : null}
                   </div>
-                </div>
                 <div className="text-sm">
                   {p.file ? (
                     <a className="underline" href={`/api/papers/${p.id}/download`}>
@@ -93,7 +119,8 @@ export default async function PapersPage({
                 </div>
               </div>
             </div>
-          ))}
+          );
+          })}
           {papers.length === 0 ? <div className="text-sm text-zinc-500">暂无内容</div> : null}
         </div>
       </div>
