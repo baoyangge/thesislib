@@ -11,6 +11,8 @@ export default async function AdminPage() {
   if (!user) redirect("/auth/login");
   if (!user.isAdmin) redirect("/");
 
+  const categories = await prisma.category.findMany({ orderBy: { name: "asc" } });
+
   const papers = await prisma.paper.findMany({
     where: { status: { in: ["SUBMITTED", "UNDER_REVIEW"] } },
     orderBy: { createdAt: "desc" },
@@ -32,6 +34,55 @@ export default async function AdminPage() {
             </Link>
           </div>
         </header>
+
+        <section className="rounded border border-zinc-200 bg-white p-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="font-medium">分类管理</div>
+            <div className="text-xs text-zinc-500">上传论文时也可自动生成分类（按 slug）</div>
+          </div>
+
+          <form
+            className="flex flex-wrap gap-2"
+            action={async (fd) => {
+              "use server";
+              const name = String(fd.get("name") || "").trim();
+              const slugRaw = String(fd.get("slug") || "").trim();
+              const slug = (slugRaw || name).toLowerCase().replace(/\s+/g, "-");
+              if (!name || !slug) return;
+              await prisma.category.upsert({
+                where: { slug },
+                update: { name },
+                create: { name, slug },
+              });
+            }}
+          >
+            <input className="rounded border px-2 py-1 text-sm" name="name" placeholder="分类名 (例如: NLP)" />
+            <input className="rounded border px-2 py-1 text-sm" name="slug" placeholder="slug (可选: nlp)" />
+            <button className="rounded bg-black px-3 py-1.5 text-sm text-white" type="submit">
+              新增/更新
+            </button>
+          </form>
+
+          <div className="flex flex-wrap gap-2 text-sm">
+            {categories.length === 0 ? (
+              <span className="text-zinc-500">暂无分类</span>
+            ) : (
+              categories.map((c) => (
+                <form
+                  key={c.id}
+                  action={async () => {
+                    "use server";
+                    await prisma.category.delete({ where: { id: c.id } });
+                  }}
+                >
+                  <button className="rounded border px-2 py-1" type="submit">
+                    {c.slug} <span className="text-zinc-400">×</span>
+                  </button>
+                </form>
+              ))
+            )}
+          </div>
+        </section>
 
         <div className="space-y-3">
           {papers.map((p) => (
