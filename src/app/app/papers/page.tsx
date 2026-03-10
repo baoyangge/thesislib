@@ -28,6 +28,8 @@ export default async function PapersPage({
     where.category = { slug: category };
   }
 
+  const categories = await prisma.category.findMany({ orderBy: { name: "asc" } });
+
   const papers = await prisma.paper.findMany({
     where,
     orderBy: mine ? { createdAt: "desc" } : { viewCount: "desc" },
@@ -64,15 +66,19 @@ export default async function PapersPage({
               全部
             </Link>
             <span className="text-zinc-400">|</span>
-            <Link className="underline" href={`${mine ? "/app/papers?mine=1&" : "/app/papers?"}category=nlp`}>
-              nlp
-            </Link>
-            <Link
-              className="underline"
-              href={`${mine ? "/app/papers?mine=1&" : "/app/papers?"}category=systems`}
-            >
-              systems
-            </Link>
+            {categories.length === 0 ? (
+              <span className="text-zinc-400">暂无分类</span>
+            ) : (
+              categories.map((c) => (
+                <Link
+                  key={c.id}
+                  className={"underline" + (category === c.slug ? " font-semibold" : "")}
+                  href={`${mine ? "/app/papers?mine=1&" : "/app/papers?"}category=${encodeURIComponent(c.slug)}`}
+                >
+                  {c.slug}
+                </Link>
+              ))
+            )}
           </div>
         </div>
 
