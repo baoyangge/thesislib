@@ -12,6 +12,7 @@ export async function POST(req: Request) {
 
   const form = await req.formData();
   const title = String(form.get("title") || "").trim();
+  const categorySelect = String(form.get("categorySelect") || "").trim();
   const category = String(form.get("category") || "").trim();
   const file = form.get("file");
 
@@ -24,15 +25,23 @@ export async function POST(req: Request) {
   }
 
   const bytes = Buffer.from(await file.arrayBuffer());
+  const maxMb = Number(process.env.MAX_UPLOAD_MB || 20);
+  if (bytes.length > maxMb * 1024 * 1024) {
+    return NextResponse.json({ ok: false, error: `file_too_large_max_${maxMb}mb` }, { status: 413 });
+  }
 
   const result = await prisma.$transaction(async (tx) => {
-    const cat = category
-      ? await tx.category.upsert({
-          where: { slug: category.toLowerCase().replace(/\s+/g, "-") },
-          update: { name: category },
-          create: { name: category, slug: category.toLowerCase().replace(/\s+/g, "-") },
-        })
-      : null;
+    const slugFromName = (s: string) => s.toLowerCase().replace(/\s+/g, "-");
+
+    const cat = categorySelect
+      ? await tx.category.findUnique({ where: { slug: categorySelect } })
+      : category
+        ? await tx.category.upsert({
+            where: { slug: slugFromName(category) },
+            update: { name: category },
+            create: { name: category, slug: slugFromName(category) },
+          })
+        : null;
 
     const paper = await tx.paper.create({
       data: {

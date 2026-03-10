@@ -3,10 +3,12 @@ export const dynamic = "force-dynamic";
 import Link from "next/link";
 import { requireUser } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import { prisma } from "@/lib/prisma";
 
 export default async function NewPaperPage() {
   const user = await requireUser();
   if (!user) redirect("/auth/login");
+  const categories = await prisma.category.findMany({ orderBy: { name: "asc" } });
 
   return (
     <div className="min-h-screen bg-zinc-50 p-6 text-zinc-900">
@@ -21,7 +23,19 @@ export default async function NewPaperPage() {
         <form className="space-y-3 rounded border border-zinc-200 bg-white p-4">
           <div className="text-sm text-zinc-600">先用下面的“浏览器提交”按钮（客户端）完成上传。</div>
           <input className="w-full rounded border p-2" name="title" placeholder="论文标题" />
-          <input className="w-full rounded border p-2" name="category" placeholder="分类（可选，例如: NLP）" />
+
+          <div className="space-y-1">
+            <div className="text-sm text-zinc-600">选择分类（可选）</div>
+            <select className="w-full rounded border p-2" name="categorySelect" defaultValue="">
+              <option value="">（不选）</option>
+              {categories.map((c) => (
+                <option key={c.id} value={c.slug}>
+                  {c.name} ({c.slug})
+                </option>
+              ))}
+            </select>
+            <input className="w-full rounded border p-2" name="category" placeholder="或手动输入分类名（会自动创建）" />
+          </div>
           <input className="w-full" name="file" type="file" accept="application/pdf" />
 
           <button
