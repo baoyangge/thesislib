@@ -20,7 +20,10 @@ export default function LoginPage() {
               body: JSON.stringify({ email, password }),
             });
             if (res.ok) window.location.href = "/";
-            else alert("登录失败");
+            else {
+              const json = await res.json().catch(() => ({}));
+              alert(`登录失败：${json.error || "账号或密码不正确"}`);
+            }
           }}
         >
           <input className="w-full rounded border p-2" name="email" placeholder="email" />

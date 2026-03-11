@@ -25,6 +25,40 @@ docker compose up -d --build
   - `./data` → SQLite db
   - `./uploads` → uploaded PDFs
 
+## EC2 (Ubuntu) quick deploy
+
+1) Install Docker
+
+```bash
+sudo apt-get update
+sudo apt-get install -y docker.io docker-compose-plugin
+sudo usermod -aG docker $USER
+# re-login once
+```
+
+2) Clone + configure
+
+```bash
+git clone https://github.com/baoyangge/thesislib.git
+cd thesislib
+cp .env.example .env
+nano .env
+```
+
+Make sure:
+- `SESSION_PASSWORD` >= 32 chars
+- `ADMIN_EMAIL` set to your admin email
+
+3) Start
+
+```bash
+docker compose up -d --build
+```
+
+4) Open firewall / SG
+
+- Allow inbound TCP 3000 (or put Nginx in front and only open 80/443)
+
 ## Notes
 
 - `ADMIN_EMAIL`：用该邮箱注册的账号会自动成为管理员（`isAdmin=true`）。

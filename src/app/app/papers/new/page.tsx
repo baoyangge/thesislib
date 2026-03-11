@@ -48,7 +48,17 @@ export default async function NewPaperPage() {
               const res = await fetch("/api/papers/upload", { method: "POST", body: fd });
               const json = await res.json().catch(() => ({}));
               if (res.ok && json.paperId) window.location.href = `/app/papers?mine=1`;
-              else alert(`上传失败: ${json.error || res.status}`);
+              else {
+                const err = String(json.error || res.status);
+                const map: Record<string, string> = {
+                  missing_title: "请填写标题",
+                  missing_file: "请选择 PDF 文件",
+                  only_pdf: "只支持 PDF",
+                  unauthorized: "请先登录",
+                };
+                const msg = map[err] || (err.startsWith("file_too_large") ? "文件太大" : err);
+                alert(`上传失败：${msg}`);
+              }
             }}
           >
             提交上传
