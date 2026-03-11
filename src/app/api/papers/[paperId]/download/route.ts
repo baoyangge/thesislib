@@ -19,7 +19,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ paperId
   }
 
   const canDownload =
-    paper.status === "APPROVED" ||
+    (paper.isActive && paper.status === "APPROVED") ||
     (user && (user.isAdmin || user.id === paper.authorId));
 
   if (!canDownload) {

@@ -5,6 +5,8 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth";
 import { PaperStatus } from "@prisma/client";
+import { unlink } from "node:fs/promises";
+import path from "node:path";
 
 export default async function AdminPage() {
   const user = await requireUser();
@@ -91,7 +93,12 @@ export default async function AdminPage() {
                 <div>
                   <div className="font-medium">{p.title}</div>
                   <div className="text-xs text-zinc-500">
-                    作者：{p.author.email} · 分类：{p.category?.slug || "-"} · 状态：{p.status}
+                    作者：{p.author.email} · 分类：{p.category?.slug || "-"} · 状态：{p.status} ·
+                    {p.isActive ? (
+                      <span className="ml-1 rounded bg-green-100 px-1.5 py-0.5 text-green-800">上架</span>
+                    ) : (
+                      <span className="ml-1 rounded bg-zinc-100 px-1.5 py-0.5 text-zinc-700">已下架</span>
+                    )}
                   </div>
                 </div>
                 {p.file ? (
@@ -103,44 +110,81 @@ export default async function AdminPage() {
                 )}
               </div>
 
+              <div className="flex flex-wrap gap-2">
+                <form
+                  className="flex flex-wrap items-center gap-2"
+                  action={async (fd) => {
+                    "use server";
+                    const decision = String(fd.get("decision") || "");
+                    const note = String(fd.get("note") || "").trim();
+                    const paperId = String(fd.get("paperId") || "");
+
+                    if (!paperId) return;
+                    if (!["UNDER_REVIEW", "APPROVED", "REJECTED"].includes(decision)) return;
+
+                    await prisma.$transaction(async (tx) => {
+                      await tx.paper.update({
+                        where: { id: paperId },
+                        data: { status: decision as PaperStatus },
+                      });
+                      await tx.paperReview.create({
+                        data: {
+                          paperId,
+                          reviewerId: user.id,
+                          decision: decision as PaperStatus,
+                          note: note || null,
+                        },
+                      });
+                    });
+                  }}
+                >
+                  <input type="hidden" name="paperId" value={p.id} />
+                  <select className="rounded border px-2 py-1 text-sm" name="decision" defaultValue="UNDER_REVIEW">
+                    <option value="UNDER_REVIEW">标记：审核中</option>
+                    <option value="APPROVED">通过</option>
+                    <option value="REJECTED">拒绝</option>
+                  </select>
+                  <input
+                    className="flex-1 min-w-48 rounded border px-2 py-1 text-sm"
+                    name="note"
+                    placeholder="备注（可选）"
+                  />
+                  <button className="rounded bg-black px-3 py-1.5 text-sm text-white" type="submit">
+                    提交
+                  </button>
+                </form>
+
               <form
-                className="flex flex-wrap items-center gap-2"
-                action={async (fd) => {
+                action={async () => {
                   "use server";
-                  const decision = String(fd.get("decision") || "");
-                  const note = String(fd.get("note") || "").trim();
-                  const paperId = String(fd.get("paperId") || "");
+                  await prisma.paper.update({ where: { id: p.id }, data: { isActive: false } });
+                }}
+              >
+                <button className="rounded border px-3 py-1.5 text-sm" type="submit">
+                  下架
+                </button>
+              </form>
 
-                  if (!paperId) return;
-                  if (!["UNDER_REVIEW", "APPROVED", "REJECTED"].includes(decision)) return;
-
-                  await prisma.$transaction(async (tx) => {
-                    await tx.paper.update({
-                      where: { id: paperId },
-                      data: { status: decision as PaperStatus },
-                    });
-                    await tx.paperReview.create({
-                      data: {
-                        paperId,
-                        reviewerId: user.id,
-                        decision: decision as PaperStatus,
-                        note: note || null,
-                      },
-                    });
+              <form
+                action={async () => {
+                  "use server";
+                  const paper = await prisma.paper.findUnique({ where: { id: p.id }, include: { file: true } });
+                  if (paper?.file?.path) {
+                    const abs = path.join(process.cwd(), "uploads", paper.file.path);
+                    await unlink(abs).catch(() => null);
+                    await prisma.paperFile.delete({ where: { paperId: p.id } }).catch(() => null);
+                  }
+                  await prisma.paper.update({ where: { id: p.id }, data: { isActive: false, status: "REJECTED" } });
+                  await prisma.paperReview.create({
+                    data: { paperId: p.id, reviewerId: user.id, decision: "REJECTED", note: "admin_removed" },
                   });
                 }}
               >
-                <input type="hidden" name="paperId" value={p.id} />
-                <select className="rounded border px-2 py-1 text-sm" name="decision" defaultValue="UNDER_REVIEW">
-                  <option value="UNDER_REVIEW">标记：审核中</option>
-                  <option value="APPROVED">通过</option>
-                  <option value="REJECTED">拒绝</option>
-                </select>
-                <input className="flex-1 min-w-48 rounded border px-2 py-1 text-sm" name="note" placeholder="备注（可选）" />
-                <button className="rounded bg-black px-3 py-1.5 text-sm text-white" type="submit">
-                  提交
+                <button className="rounded border border-red-300 px-3 py-1.5 text-sm text-red-700" type="submit">
+                  删除PDF并下架
                 </button>
               </form>
+              </div>
             </div>
           ))}
           {papers.length === 0 ? <div className="text-sm text-zinc-500">暂无待审核论文</div> : null}

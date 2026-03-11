@@ -44,6 +44,7 @@ model Paper {
   title       String
   abstract    String?
   status      PaperStatus @default(SUBMITTED)
+  isActive    Boolean     @default(true)
   viewCount   Int         @default(0)
 
   authorId    String
@@ -59,6 +60,7 @@ model Paper {
   reviews     PaperReview[]
 
   @@index([status])
+  @@index([isActive])
   @@index([viewCount])
   @@index([categoryId])
 }

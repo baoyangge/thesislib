@@ -16,8 +16,9 @@ export default async function PapersPage({
   const user = await requireUser();
 
   const where: import("@prisma/client").Prisma.PaperWhereInput = {};
-  // Public listing only shows approved papers. Authors/admins can see more via "mine" or admin pages.
+  // Public listing only shows active+approved papers. Authors can view their own (mine=1).
   if (!mine) {
+    where.isActive = true;
     if (!user || !user.isAdmin) where.status = "APPROVED";
   }
   if (mine) {
