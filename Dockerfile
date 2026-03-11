@@ -4,6 +4,9 @@ FROM node:22-slim AS base
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
 
+# Prisma engine needs OpenSSL
+RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
+
 FROM base AS deps
 RUN corepack enable
 COPY package.json pnpm-lock.yaml ./
