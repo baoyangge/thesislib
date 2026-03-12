@@ -11,105 +11,142 @@ export default async function Home() {
   const topPapers = await prisma.paper.findMany({
     where: { status: "APPROVED", file: { isNot: null } },
     orderBy: { viewCount: "desc" },
-    take: 10,
+    take: 12,
     include: { category: true },
   });
 
   return (
-    <div className="min-h-screen bg-zinc-50 p-6 text-zinc-900">
-      <div className="mx-auto max-w-2xl space-y-6">
-        <header className="space-y-2">
-          <h1 className="text-2xl font-semibold">论文期刊库 (MVP)</h1>
-          <p className="text-sm text-zinc-600">支持登录认证、论文上传/下载、管理员审核与状态追踪。</p>
-        </header>
-
-        <section className="rounded border border-zinc-200 bg-white p-4 space-y-2">
-          <div className="flex items-center justify-between">
-            <div className="font-medium">热门论文（已通过）</div>
-            <Link className="text-sm underline" href="/app/papers">
-              去检索
-            </Link>
-          </div>
-          <div className="flex flex-wrap gap-2 text-sm">
-            {categories.length === 0 ? (
-              <span className="text-zinc-400">暂无分类</span>
-            ) : (
-              categories.map((c) => (
-                <Link key={c.id} className="underline" href={`/app/papers?category=${encodeURIComponent(c.slug)}`}>
-                  {c.slug}
+    <div className="min-h-screen bg-white text-slate-900 font-sans">
+      {/* Top Navigation */}
+      <nav className="border-b border-slate-200 bg-white sticky top-0 z-10">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex h-16 justify-between items-center">
+            <div className="flex items-center">
+              <Link href="/" className="text-2xl font-bold text-blue-900 tracking-tight">
+                ThesisLib
+              </Link>
+              <div className="hidden md:ml-10 md:flex md:space-x-8">
+                <Link href="/app/papers" className="text-slate-600 hover:text-blue-900 px-3 py-2 text-sm font-medium transition-colors">
+                  Publications
                 </Link>
-              ))
-            )}
-          </div>
-          <div className="space-y-2 text-sm">
-            {topPapers.length === 0 ? (
-              <div className="text-zinc-500">暂无已通过论文</div>
-            ) : (
-              topPapers.map((p) => (
-                <div key={p.id} className="flex items-center justify-between gap-4">
-                  <div>
-                    <div className="font-medium">{p.title}</div>
-                    <div className="text-xs text-zinc-500">分类：{p.category?.slug || "-"} · 浏览：{p.viewCount}</div>
-                  </div>
-                  <a className="underline" href={`/api/papers/${p.id}/download`}>
-                    下载
-                  </a>
-                </div>
-              ))
-            )}
-          </div>
-        </section>
-
-        {!user ? (
-          <div className="flex gap-3">
-            <Link className="rounded bg-black px-4 py-2 text-white" href="/auth/signup">
-              注册
-            </Link>
-            <Link className="rounded border border-zinc-300 px-4 py-2" href="/auth/login">
-              登录
-            </Link>
-          </div>
-        ) : (
-          <div className="rounded border border-zinc-200 bg-white p-4 space-y-2">
-            <div className="text-sm">
-              当前账号：<span className="font-medium">{user.email}</span>
+                {user && (
+                  <Link href="/app/papers?mine=1" className="text-slate-600 hover:text-blue-900 px-3 py-2 text-sm font-medium transition-colors">
+                    My Papers
+                  </Link>
+                )}
+                {user?.isAdmin && (
+                  <>
+                    <Link href="/app/papers/new" className="text-slate-600 hover:text-blue-900 px-3 py-2 text-sm font-medium transition-colors">
+                      Upload Paper
+                    </Link>
+                    <Link href="/admin" className="text-slate-600 hover:text-blue-900 px-3 py-2 text-sm font-medium transition-colors">
+                      Admin
+                    </Link>
+                  </>
+                )}
+              </div>
             </div>
-            <div className="text-sm">
-              角色：
-              {user.isAdmin ? (
-                <span className="ml-2 rounded bg-purple-100 px-2 py-0.5 text-purple-800">管理员</span>
+            <div className="flex items-center space-x-4">
+              {!user ? (
+                <>
+                  <Link href="/auth/login" className="text-sm font-medium text-slate-600 hover:text-blue-900">
+                    Log in
+                  </Link>
+                  <Link href="/auth/signup" className="text-sm font-medium bg-blue-900 text-white px-4 py-2 rounded hover:bg-blue-800 transition-colors">
+                    Register
+                  </Link>
+                </>
               ) : (
-                <span className="ml-2 rounded bg-zinc-100 px-2 py-0.5 text-zinc-800">普通用户</span>
+                <div className="flex items-center space-x-4">
+                  <div className="text-sm text-slate-600">
+                    {user.email} {user.isAdmin && <span className="ml-1 text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">Admin</span>}
+                  </div>
+                  <form action={async () => { "use server"; await signOut(); }}>
+                    <button type="submit" className="text-sm font-medium text-slate-600 hover:text-blue-900">
+                      Log out
+                    </button>
+                  </form>
+                </div>
               )}
             </div>
-
-            <div className="flex flex-wrap gap-3 pt-2">
-              <Link className="rounded border border-zinc-300 px-3 py-1.5" href="/app/papers">
-                浏览论文
-              </Link>
-              <Link className="rounded bg-black px-3 py-1.5 text-white" href="/app/papers/new">
-                上传论文
-              </Link>
-              {user.isAdmin ? (
-                <Link className="rounded border border-zinc-300 px-3 py-1.5" href="/admin">
-                  管理员审核
-                </Link>
-              ) : null}
-            </div>
-
-            <form
-              action={async () => {
-                "use server";
-                await signOut();
-              }}
-            >
-              <button className="text-sm text-zinc-500 hover:underline" type="submit">
-                退出登录
-              </button>
-            </form>
           </div>
-        )}
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <div className="bg-blue-900 py-20 px-4 sm:px-6 lg:px-8 text-center">
+        <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-6">
+          Advance Your Research
+        </h1>
+        <p className="text-xl text-blue-100 mb-10 max-w-2xl mx-auto">
+          Explore the latest peer-reviewed papers, journals, and articles in various scientific disciplines.
+        </p>
+        <div className="max-w-xl mx-auto flex gap-2">
+          <Link href="/app/papers" className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-blue-900 bg-white hover:bg-slate-50 md:py-4 md:text-lg transition-colors">
+            Browse All Papers
+          </Link>
+        </div>
       </div>
+
+      <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
+        {/* Categories */}
+        <div className="mb-12">
+          <h2 className="text-2xl font-bold text-slate-900 mb-6 border-b border-slate-200 pb-2">Research Subjects</h2>
+          <div className="flex flex-wrap gap-3">
+            {categories.length === 0 ? (
+              <span className="text-slate-500">No categories found.</span>
+            ) : (
+              categories.map((c) => (
+                <Link key={c.id} href={`/app/papers?category=${encodeURIComponent(c.slug)}`} className="bg-slate-100 hover:bg-blue-50 text-slate-800 hover:text-blue-900 border border-slate-200 px-4 py-2 rounded-full text-sm font-medium transition-colors">
+                  {c.name}
+                </Link>
+              ))
+            )}
+          </div>
+        </div>
+
+        {/* Top Papers Grid */}
+        <div>
+          <h2 className="text-2xl font-bold text-slate-900 mb-6 border-b border-slate-200 pb-2">Most Read Articles</h2>
+          {topPapers.length === 0 ? (
+            <div className="text-slate-500 text-center py-12 bg-slate-50 rounded-lg border border-slate-200">
+              No published papers available at the moment.
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {topPapers.map((p) => (
+                <div key={p.id} className="flex flex-col bg-white border border-slate-200 rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+                  <div className="p-6 flex-grow">
+                    <div className="text-xs font-semibold tracking-wide uppercase text-blue-600 mb-2">
+                      {p.category?.name || "Uncategorized"}
+                    </div>
+                    <h3 className="text-lg font-bold text-slate-900 mb-3 line-clamp-2" title={p.title}>
+                      {p.title}
+                    </h3>
+                    <div className="text-sm text-slate-500 flex items-center justify-between mt-auto">
+                      <span>Views: {p.viewCount}</span>
+                      <span>{new Date(p.createdAt).toLocaleDateString()}</span>
+                    </div>
+                  </div>
+                  <div className="bg-slate-50 px-6 py-4 border-t border-slate-100">
+                    <a href={`/api/papers/${p.id}/download`} className="text-blue-700 font-medium hover:text-blue-900 flex items-center text-sm">
+                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                      Download PDF
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </main>
+      
+      {/* Footer */}
+      <footer className="bg-slate-900 text-slate-300 py-12 text-center text-sm mt-12">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <p>&copy; {new Date().getFullYear()} ThesisLib. A Professional Scientific Library.</p>
+        </div>
+      </footer>
     </div>
   );
 }

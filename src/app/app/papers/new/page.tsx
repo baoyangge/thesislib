@@ -8,7 +8,7 @@ import UploadPaperForm from "./UploadPaperForm";
 
 export default async function NewPaperPage() {
   const user = await requireUser();
-  if (!user) redirect("/auth/login");
+  if (!user || !user.isAdmin) redirect("/");
 
   const categories = await prisma.category.findMany({ orderBy: { name: "asc" } });
 

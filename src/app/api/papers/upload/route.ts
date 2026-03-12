@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
   const user = await requireUser();
-  if (!user) return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
+  if (!user || !user.isAdmin) return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
 
   const form = await req.formData();
   const title = String(form.get("title") || "").trim();
