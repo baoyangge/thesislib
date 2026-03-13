@@ -7,7 +7,7 @@ export type SessionData = {
 };
 
 export const sessionOptions: SessionOptions = {
-  cookieName: "thesislib_session",
+  cookieName: "faultjournal_session",
   password: process.env.SESSION_PASSWORD as string,
   cookieOptions: {
     secure: process.env.NODE_ENV === "production",

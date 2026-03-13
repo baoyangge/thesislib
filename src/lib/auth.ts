@@ -15,7 +15,7 @@ export async function signUp(email: string, password: string) {
     data: {
       email,
       password: hashed,
-      isAdmin: adminEmail ? email.toLowerCase() === adminEmail : false,
+      isAdmin: adminEmail ? adminEmail.split(",").map(e=>e.trim()).includes(email.toLowerCase()) : false,
     },
   });
   const session = await getSession();

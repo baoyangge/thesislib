@@ -1,0 +1,3 @@
+faultjournal.org, www.faultjournal.org {
+    reverse_proxy web:3000
+}

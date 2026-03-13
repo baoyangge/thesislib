@@ -3,7 +3,7 @@ export const dynamic = "force-dynamic";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { requireUser } from "@/lib/auth";
+import { requireUser, signOut } from "@/lib/auth";
 import { PaperStatus } from "@prisma/client";
 import { unlink } from "node:fs/promises";
 import path from "node:path";
@@ -23,28 +23,76 @@ export default async function AdminPage() {
   });
 
   return (
-    <div className="min-h-screen bg-zinc-50 p-6 text-zinc-900">
-      <div className="mx-auto max-w-4xl space-y-4">
-        <header className="flex items-center justify-between">
-          <h1 className="text-xl font-semibold">管理员审核</h1>
-          <div className="flex gap-3 text-sm">
-            <Link className="underline" href="/">
-              首页
-            </Link>
-            <Link className="underline" href="/app/papers">
-              论文列表
-            </Link>
+    <div className="min-h-screen bg-white text-slate-900 font-sans">
+      {/* Top Navigation */}
+      <nav className="border-b border-slate-200 bg-white sticky top-0 z-10">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex h-16 justify-between items-center">
+            <div className="flex items-center">
+              <Link href="/" className="text-2xl font-bold text-blue-900 tracking-tight">
+                FaultJournal
+              </Link>
+              <div className="hidden md:ml-10 md:flex md:space-x-8">
+                <Link href="/app/papers" className="text-slate-600 hover:text-blue-900 px-3 py-2 text-sm font-medium transition-colors">
+                  Publications
+                </Link>
+                {user && (
+                  <Link href="/app/papers?mine=1" className="text-slate-600 hover:text-blue-900 px-3 py-2 text-sm font-medium transition-colors">
+                    My Papers
+                  </Link>
+                )}
+                {user?.isAdmin && (
+                  <>
+                    <Link href="/app/papers/new" className="text-slate-600 hover:text-blue-900 px-3 py-2 text-sm font-medium transition-colors">
+                      Upload Paper
+                    </Link>
+                    <Link href="/admin" className="text-blue-900 px-3 py-2 text-sm font-medium transition-colors border-b-2 border-blue-900">
+                      Admin
+                    </Link>
+                  </>
+                )}
+              </div>
+            </div>
+            <div className="flex items-center space-x-4">
+              {!user ? (
+                <>
+                  <Link href="/auth/login" className="text-slate-600 hover:text-blue-900 px-3 py-2 text-sm font-medium">
+                    Log in
+                  </Link>
+                  <Link href="/auth/signup" className="bg-blue-900 text-white hover:bg-blue-800 px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                    Sign up
+                  </Link>
+                </>
+              ) : (
+                <div className="flex items-center gap-4">
+                  <span className="text-sm text-slate-500 hidden sm:inline-block">{user.email}</span>
+                  <form action={async () => { "use server"; await signOut(); }}>
+                    <button type="submit" className="text-sm font-medium text-slate-600 hover:text-blue-900 transition-colors">
+                      Log out
+                    </button>
+                  </form>
+                </div>
+              )}
+            </div>
           </div>
-        </header>
+        </div>
+      </nav>
 
-        <section className="rounded border border-zinc-200 bg-white p-4 space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="font-medium">分类管理</div>
-            <div className="text-xs text-zinc-500">上传论文时也可自动生成分类（按 slug）</div>
+      {/* Main Content */}
+      <main className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-12 space-y-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-slate-900 tracking-tight mb-2">Admin Dashboard</h1>
+          <p className="text-slate-500">Review papers and manage categories.</p>
+        </div>
+
+        <section className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-4">
+            <h2 className="text-lg font-semibold text-slate-900">Category Management</h2>
+            <div className="text-sm text-slate-500">Auto-create categories during paper upload using slugs</div>
           </div>
 
           <form
-            className="flex flex-wrap gap-2"
+            className="flex flex-wrap gap-3 items-end"
             action={async (fd) => {
               "use server";
               const name = String(fd.get("name") || "").trim();
@@ -58,16 +106,22 @@ export default async function AdminPage() {
               });
             }}
           >
-            <input className="rounded border px-2 py-1 text-sm" name="name" placeholder="分类名 (例如: NLP)" />
-            <input className="rounded border px-2 py-1 text-sm" name="slug" placeholder="slug (可选: nlp)" />
-            <button className="rounded bg-black px-3 py-1.5 text-sm text-white" type="submit">
-              新增/更新
+            <div className="flex-1 min-w-[200px]">
+              <label className="block text-sm font-medium text-slate-700 mb-1">Category Name</label>
+              <input className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500" name="name" placeholder="e.g. Artificial Intelligence" />
+            </div>
+            <div className="flex-1 min-w-[200px]">
+              <label className="block text-sm font-medium text-slate-700 mb-1">Slug (Optional)</label>
+              <input className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500" name="slug" placeholder="e.g. ai" />
+            </div>
+            <button className="bg-blue-900 text-white hover:bg-blue-800 px-4 py-2 rounded-md text-sm font-medium transition-colors" type="submit">
+              Add / Update
             </button>
           </form>
 
-          <div className="flex flex-wrap gap-2 text-sm">
+          <div className="flex flex-wrap gap-2 pt-4">
             {categories.length === 0 ? (
-              <span className="text-zinc-500">暂无分类</span>
+              <span className="text-slate-500 text-sm italic">No categories found.</span>
             ) : (
               categories.map((c) => (
                 <form
@@ -77,8 +131,8 @@ export default async function AdminPage() {
                     await prisma.category.delete({ where: { id: c.id } });
                   }}
                 >
-                  <button className="rounded border px-2 py-1" type="submit">
-                    {c.slug} <span className="text-zinc-400">×</span>
+                  <button className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-sm text-slate-700 hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-colors group" type="submit">
+                    {c.slug} <span className="text-slate-400 group-hover:text-red-500">&times;</span>
                   </button>
                 </form>
               ))
@@ -86,33 +140,44 @@ export default async function AdminPage() {
           </div>
         </section>
 
-        <div className="space-y-3">
+        <section className="space-y-4">
+          <h2 className="text-xl font-bold text-slate-900 mb-4">Papers Pending Review</h2>
           {papers.map((p) => (
-            <div key={p.id} className="rounded border border-zinc-200 bg-white p-4 space-y-2">
-              <div className="flex items-start justify-between gap-4">
+            <div key={p.id} className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm flex flex-col gap-4">
+              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                 <div>
-                  <div className="font-medium">{p.title}</div>
-                  <div className="text-xs text-zinc-500">
-                    作者：{p.author.email} · 分类：{p.category?.slug || "-"} · 状态：{p.status} ·
+                  <h3 className="text-lg font-bold text-slate-900 mb-1">{p.title}</h3>
+                  <div className="text-sm text-slate-500 flex flex-wrap items-center gap-x-2 gap-y-1">
+                    <span><span className="font-medium">Author:</span> {p.author.email}</span>
+                    <span className="text-slate-300">|</span>
+                    <span><span className="font-medium">Category:</span> {p.category?.slug || "-"}</span>
+                    <span className="text-slate-300">|</span>
+                    <span>
+                      <span className="font-medium mr-1">Status:</span>
+                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
+                        {p.status}
+                      </span>
+                    </span>
+                    <span className="text-slate-300">|</span>
                     {p.isActive ? (
-                      <span className="ml-1 rounded bg-green-100 px-1.5 py-0.5 text-green-800">上架</span>
+                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">Active</span>
                     ) : (
-                      <span className="ml-1 rounded bg-zinc-100 px-1.5 py-0.5 text-zinc-700">已下架</span>
+                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-800">Inactive</span>
                     )}
                   </div>
                 </div>
                 {p.file ? (
-                  <a className="underline text-sm" href={`/api/papers/${p.id}/download`}>
-                    下载PDF
+                  <a className="inline-flex items-center justify-center px-4 py-2 border border-blue-200 text-sm font-medium rounded-md text-blue-700 bg-blue-50 hover:bg-blue-100 transition-colors shrink-0" href={`/api/papers/${p.id}/download`} target="_blank" rel="noopener noreferrer">
+                    Download PDF
                   </a>
                 ) : (
-                  <span className="text-sm text-zinc-400">无文件</span>
+                  <span className="text-sm text-slate-400 italic shrink-0 px-4 py-2">No File</span>
                 )}
               </div>
 
-              <div className="flex flex-wrap gap-2">
+              <div className="pt-4 border-t border-slate-100 flex flex-wrap gap-3 items-center">
                 <form
-                  className="flex flex-wrap items-center gap-2"
+                  className="flex flex-wrap items-center gap-2 flex-1"
                   action={async (fd) => {
                     "use server";
                     const decision = String(fd.get("decision") || "");
@@ -139,57 +204,61 @@ export default async function AdminPage() {
                   }}
                 >
                   <input type="hidden" name="paperId" value={p.id} />
-                  <select className="rounded border px-2 py-1 text-sm" name="decision" defaultValue="UNDER_REVIEW">
-                    <option value="UNDER_REVIEW">标记：审核中</option>
-                    <option value="APPROVED">通过</option>
-                    <option value="REJECTED">拒绝</option>
+                  <select className="rounded-md border border-slate-300 px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500" name="decision" defaultValue="UNDER_REVIEW">
+                    <option value="UNDER_REVIEW">Mark: In Review</option>
+                    <option value="APPROVED">Approve</option>
+                    <option value="REJECTED">Reject</option>
                   </select>
                   <input
-                    className="flex-1 min-w-48 rounded border px-2 py-1 text-sm"
+                    className="flex-1 min-w-[150px] rounded-md border border-slate-300 px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500"
                     name="note"
-                    placeholder="备注（可选）"
+                    placeholder="Optional note for author..."
                   />
-                  <button className="rounded bg-black px-3 py-1.5 text-sm text-white" type="submit">
-                    提交
+                  <button className="bg-blue-900 text-white hover:bg-blue-800 px-4 py-2 rounded-md text-sm font-medium transition-colors" type="submit">
+                    Submit Decision
                   </button>
                 </form>
 
-              <form
-                action={async () => {
-                  "use server";
-                  await prisma.paper.update({ where: { id: p.id }, data: { isActive: false } });
-                }}
-              >
-                <button className="rounded border px-3 py-1.5 text-sm" type="submit">
-                  下架
-                </button>
-              </form>
+                <form
+                  action={async () => {
+                    "use server";
+                    await prisma.paper.update({ where: { id: p.id }, data: { isActive: false } });
+                  }}
+                >
+                  <button className="bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-md text-sm font-medium transition-colors" type="submit">
+                    Hide (Inactive)
+                  </button>
+                </form>
 
-              <form
-                action={async () => {
-                  "use server";
-                  const paper = await prisma.paper.findUnique({ where: { id: p.id }, include: { file: true } });
-                  if (paper?.file?.path) {
-                    const abs = path.join(process.cwd(), "uploads", paper.file.path);
-                    await unlink(abs).catch(() => null);
-                    await prisma.paperFile.delete({ where: { paperId: p.id } }).catch(() => null);
-                  }
-                  await prisma.paper.update({ where: { id: p.id }, data: { isActive: false, status: "REJECTED" } });
-                  await prisma.paperReview.create({
-                    data: { paperId: p.id, reviewerId: user.id, decision: "REJECTED", note: "admin_removed" },
-                  });
-                }}
-              >
-                <button className="rounded border border-red-300 px-3 py-1.5 text-sm text-red-700" type="submit">
-                  删除PDF并下架
-                </button>
-              </form>
+                <form
+                  action={async () => {
+                    "use server";
+                    const paper = await prisma.paper.findUnique({ where: { id: p.id }, include: { file: true } });
+                    if (paper?.file?.path) {
+                      const abs = path.join(process.cwd(), "uploads", paper.file.path);
+                      await unlink(abs).catch(() => null);
+                      await prisma.paperFile.delete({ where: { paperId: p.id } }).catch(() => null);
+                    }
+                    await prisma.paper.update({ where: { id: p.id }, data: { isActive: false, status: "REJECTED" } });
+                    await prisma.paperReview.create({
+                      data: { paperId: p.id, reviewerId: user.id, decision: "REJECTED", note: "admin_removed" },
+                    });
+                  }}
+                >
+                  <button className="bg-white border border-red-300 text-red-700 hover:bg-red-50 hover:border-red-400 px-4 py-2 rounded-md text-sm font-medium transition-colors" type="submit">
+                    Delete PDF & Hide
+                  </button>
+                </form>
               </div>
             </div>
           ))}
-          {papers.length === 0 ? <div className="text-sm text-zinc-500">暂无待审核论文</div> : null}
-        </div>
-      </div>
+          {papers.length === 0 && (
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-8 text-center">
+              <p className="text-slate-500">No papers currently pending review.</p>
+            </div>
+          )}
+        </section>
+      </main>
     </div>
   );
 }

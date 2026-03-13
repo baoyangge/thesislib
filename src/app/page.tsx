@@ -23,7 +23,7 @@ export default async function Home() {
           <div className="flex h-16 justify-between items-center">
             <div className="flex items-center">
               <Link href="/" className="text-2xl font-bold text-blue-900 tracking-tight">
-                ThesisLib
+                FaultJournal
               </Link>
               <div className="hidden md:ml-10 md:flex md:space-x-8">
                 <Link href="/app/papers" className="text-slate-600 hover:text-blue-900 px-3 py-2 text-sm font-medium transition-colors">
@@ -81,7 +81,7 @@ export default async function Home() {
         <p className="text-xl text-blue-100 mb-10 max-w-2xl mx-auto">
           Explore the latest peer-reviewed papers, journals, and articles in various scientific disciplines.
         </p>
-        <div className="max-w-xl mx-auto flex gap-2">
+        <div className="max-w-xl mx-auto flex justify-center gap-2">
           <Link href="/app/papers" className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-blue-900 bg-white hover:bg-slate-50 md:py-4 md:text-lg transition-colors">
             Browse All Papers
           </Link>
@@ -168,7 +168,7 @@ export default async function Home() {
           <p className="mb-2">
             Contact us: <a href="mailto:faultjournal.contact@gmail.com" className="text-blue-400 hover:text-blue-300 transition-colors">faultjournal.contact@gmail.com</a>
           </p>
-          <p>&copy; {new Date().getFullYear()} ThesisLib. A Professional Scientific Library.</p>
+          <p>&copy; {new Date().getFullYear()} FaultJournal. A Professional Scientific Library.</p>
         </div>
       </footer>
     </div>

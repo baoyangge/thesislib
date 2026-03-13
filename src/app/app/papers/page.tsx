@@ -53,7 +53,7 @@ export default async function PapersPage({
           <div className="flex h-16 justify-between items-center">
             <div className="flex items-center">
               <Link href="/" className="text-2xl font-bold text-blue-900 tracking-tight">
-                ThesisLib
+                FaultJournal
               </Link>
               <div className="hidden md:ml-10 md:flex md:space-x-8">
                 <Link href="/app/papers" className="text-blue-900 px-3 py-2 text-sm font-medium transition-colors border-b-2 border-blue-900">
@@ -207,7 +207,7 @@ export default async function PapersPage({
       {/* Footer */}
       <footer className="bg-slate-900 text-slate-300 py-12 text-center text-sm mt-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <p>&copy; {new Date().getFullYear()} ThesisLib. A Professional Scientific Library.</p>
+          <p>&copy; {new Date().getFullYear()} FaultJournal. A Professional Scientific Library.</p>
         </div>
       </footer>
     </div>
