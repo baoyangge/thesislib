@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { FormEvent, useState } from "react";
 
-export default function SignUpPage() {
+export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -14,16 +14,9 @@ export default function SignUpPage() {
     const fd = new FormData(e.currentTarget);
     const email = String(fd.get("email") || "");
     const password = String(fd.get("password") || "");
-    const confirmPassword = String(fd.get("confirmPassword") || "");
     
-    if (password !== confirmPassword) {
-      setError("Passwords do not match.");
-      setIsLoading(false);
-      return;
-    }
-
     try {
-      const res = await fetch("/api/auth/signup", {
+      const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -32,7 +25,7 @@ export default function SignUpPage() {
         window.location.href = "/";
       } else {
         const json = await res.json().catch(() => ({}));
-        setError(json.error || "Sign up failed. Please try a different email.");
+        setError(json.error || "Login failed. Invalid email or password.");
       }
     } catch (err) {
       setError("An unexpected error occurred. Please try again.");
@@ -50,12 +43,12 @@ export default function SignUpPage() {
           </Link>
         </div>
         <h2 className="mt-6 text-center text-3xl font-extrabold text-slate-900">
-          Create a new account
+          Sign in to your account
         </h2>
         <p className="mt-2 text-center text-sm text-slate-600">
-          Already have an account?{" "}
-          <Link href="/auth/login" className="font-medium text-blue-600 hover:text-blue-500 transition-colors">
-            Sign in here
+          Or{" "}
+          <Link href="/auth/signup" className="font-medium text-blue-600 hover:text-blue-500 transition-colors">
+            register for a new account
           </Link>
         </p>
       </div>
@@ -94,44 +87,32 @@ export default function SignUpPage() {
                   id="password"
                   name="password"
                   type="password"
-                  autoComplete="new-password"
+                  autoComplete="current-password"
                   required
-                  minLength={8}
-                  placeholder="At least 8 characters"
-                  className="appearance-none block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                />
-              </div>
-            </div>
-            
-            <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-slate-700">
-                Confirm Password
-              </label>
-              <div className="mt-1">
-                <input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type="password"
-                  autoComplete="new-password"
-                  required
-                  minLength={8}
-                  placeholder="Confirm password"
+                  placeholder="••••••••"
                   className="appearance-none block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 />
               </div>
             </div>
 
-            <div className="flex items-center">
-              <input
-                id="terms"
-                name="terms"
-                type="checkbox"
-                required
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded"
-              />
-              <label htmlFor="terms" className="ml-2 block text-sm text-slate-900">
-                I agree to the <a href="#" className="text-blue-600 hover:text-blue-500">Terms of Service</a> and <a href="#" className="text-blue-600 hover:text-blue-500">Privacy Policy</a>
-              </label>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <input
+                  id="remember-me"
+                  name="remember-me"
+                  type="checkbox"
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded"
+                />
+                <label htmlFor="remember-me" className="ml-2 block text-sm text-slate-900">
+                  Remember me
+                </label>
+              </div>
+
+              <div className="text-sm">
+                <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
+                  Forgot your password?
+                </a>
+              </div>
             </div>
 
             <div>
@@ -140,7 +121,7 @@ export default function SignUpPage() {
                 disabled={isLoading}
                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-900 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isLoading ? "Creating account..." : "Register"}
+                {isLoading ? "Signing in..." : "Sign in"}
               </button>
             </div>
           </form>

@@ -1,0 +1,23 @@
+{
+  "Navigation": {
+    "home": "Home",
+    "upload_paper": "Upload Paper",
+    "publications": "Publications",
+    "admin": "Admin",
+    "login": "Login",
+    "logout": "Logout",
+    "signup": "Sign Up",
+    "my_papers": "My Papers"
+  },
+  "Home": {
+    "hero_title": "Advance Your Research",
+    "hero_subtitle": "Explore the latest peer-reviewed papers, journals, and articles in various scientific disciplines.",
+    "browse_all": "Browse All Papers",
+    "research_subjects": "Research Subjects",
+    "most_read": "Most Read Articles",
+    "no_categories": "No categories found.",
+    "no_papers": "No published papers available at the moment.",
+    "views": "Views",
+    "download_pdf": "Download PDF"
+  }
+}

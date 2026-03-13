@@ -1,0 +1,23 @@
+{
+  "Navigation": {
+    "home": "ホーム",
+    "upload_paper": "論文をアップロード",
+    "publications": "出版物",
+    "admin": "管理",
+    "login": "ログイン",
+    "logout": "ログアウト",
+    "signup": "登録",
+    "my_papers": "私の論文"
+  },
+  "Home": {
+    "hero_title": "研究を推進する",
+    "hero_subtitle": "様々な科学分野の最新の査読付き論文、ジャーナル、記事を探索します。",
+    "browse_all": "すべての論文を閲覧する",
+    "research_subjects": "研究分野",
+    "most_read": "最も読まれた記事",
+    "no_categories": "カテゴリが見つかりません。",
+    "no_papers": "現在利用可能な論文はありません。",
+    "views": "閲覧数",
+    "download_pdf": "PDFをダウンロード"
+  }
+}

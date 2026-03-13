@@ -1,0 +1,23 @@
+{
+  "Navigation": {
+    "home": "首页",
+    "upload_paper": "上传论文",
+    "publications": "出版物",
+    "admin": "管理",
+    "login": "登录",
+    "logout": "登出",
+    "signup": "注册",
+    "my_papers": "我的论文"
+  },
+  "Home": {
+    "hero_title": "推进您的研究",
+    "hero_subtitle": "探索各个科学领域的最新同行评审论文、期刊和文章。",
+    "browse_all": "浏览所有论文",
+    "research_subjects": "研究学科",
+    "most_read": "阅读最多的文章",
+    "no_categories": "未找到分类。",
+    "no_papers": "目前没有可用的已发表论文。",
+    "views": "浏览量",
+    "download_pdf": "下载PDF"
+  }
+}
