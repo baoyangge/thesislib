@@ -1,10 +1,12 @@
 "use client";
+import { useTranslations } from "next-intl";
 
 export default function UploadPaperForm({
   categories,
 }: {
   categories: { id: string; name: string; slug: string }[];
 }) {
+  const t = useTranslations("Upload");
   return (
     <form
       className="space-y-3 rounded border border-zinc-200 bg-white p-4"
@@ -17,31 +19,31 @@ export default function UploadPaperForm({
         else {
           const err = String(json.error || res.status);
           const map: Record<string, string> = {
-            missing_title: "请填写标题",
-            missing_file: "请选择 PDF 文件",
-            only_pdf: "只支持 PDF",
-            unauthorized: "请先登录",
+            missing_title: t("Please enter a title"),
+            missing_file: t("Please select a PDF file"),
+            only_pdf: t("Only PDF is supported"),
+            unauthorized: t("Please login first"),
           };
-          const msg = map[err] || (err.startsWith("file_too_large") ? "文件太大" : err);
-          alert(`上传失败：${msg}`);
+          const msg = map[err] || (err.startsWith("file_too_large") ? t("File is too large") : err);
+          alert(`${t("Upload failed:")} ${msg}`);
         }
       }}
     >
-      <div className="text-sm text-zinc-600">上传后可在“我的论文”查看状态。</div>
+      <div className="text-sm text-zinc-600">{t("You can check the status in 'My Papers' after uploading.")}</div>
 
-      <input className="w-full rounded border border-slate-300 p-2" name="title" placeholder="论文标题" required />
+      <input className="w-full rounded border border-slate-300 p-2" name="title" placeholder={t("Paper Title")} required />
 
       <div className="space-y-1">
-        <div className="text-sm text-zinc-600">选择分类（可选）</div>
+        <div className="text-sm text-zinc-600">{t("Select Category (Optional)")}</div>
         <select className="w-full rounded border border-slate-300 p-2" name="categorySelect" defaultValue="">
-          <option value="">（不选）</option>
+          <option value="">{t("(None)")}</option>
           {categories.map((c) => (
             <option key={c.id} value={c.slug}>
               {c.name} ({c.slug})
             </option>
           ))}
         </select>
-        <input className="w-full rounded border border-slate-300 p-2" name="category" placeholder="或手动输入分类名（会自动创建）" />
+        <input className="w-full rounded border border-slate-300 p-2" name="category" placeholder={t("Or type category name (auto-created)")} />
       </div>
 
       <input className="w-full" name="file" type="file" accept="application/pdf" required />
@@ -50,7 +52,7 @@ export default function UploadPaperForm({
         className="bg-blue-900 text-white hover:bg-blue-800 px-6 py-2 rounded-md font-medium transition-colors w-full"
         type="submit"
       >
-        提交上传
+        {t("Submit Paper")}
       </button>
     </form>
   );
