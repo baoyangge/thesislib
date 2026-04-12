@@ -6,12 +6,14 @@ import { Link } from "@/i18n/routing";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth";
 import { signOut } from "@/lib/auth";
+import { getTranslations } from "next-intl/server";
 
 export default async function PapersPage({
   searchParams,
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
+  const t = await getTranslations("Papers");
   const sp = await searchParams;
   const mine = sp.mine === "1";
   const category = typeof sp.category === "string" ? sp.category : "";
