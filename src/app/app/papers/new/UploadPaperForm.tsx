@@ -30,6 +30,9 @@ export default function UploadPaperForm({
       <div className="text-sm text-zinc-600">上传后可在“我的论文”查看状态。</div>
 
       <input className="w-full rounded border border-slate-300 p-2" name="title" placeholder="论文标题" required />
+      <input className="w-full rounded border border-slate-300 p-2" name="authors" placeholder="作者（多个用逗号分隔）" />
+      <input className="w-full rounded border border-slate-300 p-2" name="doi" placeholder="DOI 编号（如 10.1000/182）" />
+      <textarea className="w-full rounded border border-slate-300 p-2 h-32" name="abstract" placeholder="摘要" />
 
       <div className="space-y-1">
         <div className="text-sm text-zinc-600">选择分类（可选）</div>

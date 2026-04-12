@@ -12,6 +12,9 @@ export async function POST(req: Request) {
 
   const form = await req.formData();
   const title = String(form.get("title") || "").trim();
+  const abstract = String(form.get("abstract") || "").trim();
+  const authors = String(form.get("authors") || "").trim();
+  const doi = String(form.get("doi") || "").trim();
   const categorySelect = String(form.get("categorySelect") || "").trim();
   const category = String(form.get("category") || "").trim();
   const file = form.get("file");
@@ -46,6 +49,9 @@ export async function POST(req: Request) {
     const paper = await tx.paper.create({
       data: {
         title,
+        abstract: abstract || null,
+        authors: authors || null,
+        doi: doi || null,
         authorId: user.id,
         categoryId: cat?.id,
       },
