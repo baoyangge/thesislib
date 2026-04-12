@@ -32,6 +32,9 @@ export default function UploadPaperForm({
       <div className="text-sm text-zinc-600">{t("You can check the status in 'My Papers' after uploading.")}</div>
 
       <input className="w-full rounded border border-slate-300 p-2" name="title" placeholder={t("Paper Title")} required />
+      <input className="w-full rounded border border-slate-300 p-2" name="authors" placeholder={t("Authors (comma separated)")} />
+      <input className="w-full rounded border border-slate-300 p-2" name="doi" placeholder={t("DOI (e.g. 10.1000/182)")} />
+      <textarea className="w-full rounded border border-slate-300 p-2 h-32" name="abstract" placeholder={t("Abstract")} />
 
       <div className="space-y-1">
         <div className="text-sm text-zinc-600">{t("Select Category (Optional)")}</div>

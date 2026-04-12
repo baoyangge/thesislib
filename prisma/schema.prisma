@@ -44,6 +44,8 @@ model Paper {
   id          String      @id @default(cuid())
   title       String
   abstract    String?
+  authors     String?
+  doi         String?
   status      PaperStatus @default(SUBMITTED)
   isActive    Boolean     @default(true)
   viewCount   Int         @default(0)
