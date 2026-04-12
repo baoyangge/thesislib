@@ -7,7 +7,14 @@
     "login": "Login",
     "logout": "Logout",
     "signup": "Sign Up",
-    "my_papers": "My Papers"
+    "my_papers": "My Papers",
+    "Publications": "Publications",
+    "My Papers": "My Papers",
+    "Upload Paper": "Upload Paper",
+    "Admin": "Admin",
+    "Log in": "Log in",
+    "Register": "Register",
+    "Log out": "Log out"
   },
   "Home": {
     "hero_title": "Advance Your Research",
@@ -18,7 +25,17 @@
     "no_categories": "No categories found.",
     "no_papers": "No published papers available at the moment.",
     "views": "Views",
-    "download_pdf": "Download PDF"
+    "download_pdf": "Download PDF",
+    "details": "Details"
+  },
+  "Papers": {
+    "Abstract": "Abstract",
+    "File Unavailable": "File Unavailable",
+    "Edit": "Edit",
+    "Details": "Details",
+    "Paper Title": "Paper Title",
+    "Authors (comma separated)": "Authors (comma separated)",
+    "DOI (e.g. 10.1000/182)": "DOI (e.g. 10.1000/182)"
   },
   "Admin": {
     "title": "Admin Dashboard",

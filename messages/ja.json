@@ -7,7 +7,14 @@
     "login": "ログイン",
     "logout": "ログアウト",
     "signup": "登録",
-    "my_papers": "私の論文"
+    "my_papers": "私の論文",
+    "Publications": "出版物",
+    "My Papers": "私の論文",
+    "Upload Paper": "論文をアップロード",
+    "Admin": "管理",
+    "Log in": "ログイン",
+    "Register": "登録",
+    "Log out": "ログアウト"
   },
   "Home": {
     "hero_title": "研究を推進する",
@@ -18,7 +25,17 @@
     "no_categories": "カテゴリが見つかりません。",
     "no_papers": "現在利用可能な論文はありません。",
     "views": "閲覧数",
-    "download_pdf": "PDFをダウンロード"
+    "download_pdf": "PDFをダウンロード",
+    "details": "詳細"
+  },
+  "Papers": {
+    "Abstract": "概要",
+    "File Unavailable": "ファイルなし",
+    "Edit": "編集",
+    "Details": "詳細",
+    "Paper Title": "論文のタイトル",
+    "Authors (comma separated)": "著者 (カンマ区切り)",
+    "DOI (e.g. 10.1000/182)": "DOI (例: 10.1000/182)"
   },
   "Admin": {
     "title": "管理ダッシュボード",

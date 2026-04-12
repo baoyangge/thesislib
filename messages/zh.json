@@ -7,7 +7,14 @@
     "login": "登录",
     "logout": "登出",
     "signup": "注册",
-    "my_papers": "我的论文"
+    "my_papers": "我的论文",
+    "Publications": "出版物",
+    "My Papers": "我的论文",
+    "Upload Paper": "上传论文",
+    "Admin": "管理",
+    "Log in": "登录",
+    "Register": "注册",
+    "Log out": "登出"
   },
   "Home": {
     "hero_title": "推进您的研究",
@@ -18,7 +25,17 @@
     "no_categories": "未找到分类。",
     "no_papers": "目前没有可用的已发表论文。",
     "views": "浏览量",
-    "download_pdf": "下载PDF"
+    "download_pdf": "下载PDF",
+    "details": "详情"
+  },
+  "Papers": {
+    "Abstract": "摘要",
+    "File Unavailable": "无文件",
+    "Edit": "编辑",
+    "Details": "详情",
+    "Paper Title": "论文标题",
+    "Authors (comma separated)": "作者（多位请用逗号分隔）",
+    "DOI (e.g. 10.1000/182)": "DOI编号 (例如 10.1000/182)"
   },
   "Admin": {
     "title": "管理控制台",
