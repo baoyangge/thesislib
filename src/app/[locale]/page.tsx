@@ -26,11 +26,17 @@ export default async function Home() {
       <Navbar user={user} />
 
       {/* Hero Section */}
-      <div className="bg-blue-900 py-20 px-4 sm:px-6 lg:px-8 text-center">
-        <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-6">{t("hero_title")}</h1>
-        <p className="text-xl text-blue-100 mb-10 max-w-2xl mx-auto">{t("hero_subtitle")}</p>
-        <div className="max-w-xl mx-auto flex justify-center gap-2">
-          <Link href="/app/papers" className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-blue-900 bg-white hover:bg-slate-50 md:py-4 md:text-lg transition-colors">{t("browse_all")}</Link>
+      <div 
+        className="bg-blue-900 py-20 px-4 sm:px-6 lg:px-8 text-center bg-cover bg-center bg-no-repeat relative"
+        style={{ backgroundImage: "url('/coverimg.png')" }}
+      >
+        <div className="absolute inset-0 bg-blue-900/70" />
+        <div className="relative z-10">
+          <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-6">{t("hero_title")}</h1>
+          <p className="text-xl text-blue-100 mb-10 max-w-2xl mx-auto">{t("hero_subtitle")}</p>
+          <div className="max-w-xl mx-auto flex justify-center gap-2">
+            <Link href="/app/papers" className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-blue-900 bg-white hover:bg-slate-50 md:py-4 md:text-lg transition-colors">{t("browse_all")}</Link>
+          </div>
         </div>
       </div>
 
