@@ -19,6 +19,9 @@ export default async function Navbar({ user }: { user: any }) {
               <Link href="/app/papers" className="text-slate-600 hover:text-blue-900 px-3 py-2 text-sm font-medium transition-colors">
                 {t('publications')}
               </Link>
+              <Link href="/app/campaign" className="text-orange-600 hover:text-orange-700 px-3 py-2 text-sm font-bold transition-colors">
+                🔥 {t('campaign') || 'Campaign'}
+              </Link>
               {user && (
                 <Link href="/app/papers?mine=1" className="text-slate-600 hover:text-blue-900 px-3 py-2 text-sm font-medium transition-colors">
                   {t('my_papers')}

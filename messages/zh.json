@@ -14,7 +14,8 @@
     "Admin": "管理",
     "Log in": "登录",
     "Register": "注册",
-    "Log out": "登出"
+    "Log out": "登出",
+    "campaign": "有奖征稿"
   },
   "Home": {
     "hero_title": "推进您的研究",
@@ -26,7 +27,8 @@
     "no_papers": "目前没有可用的已发表论文。",
     "views": "浏览量",
     "download_pdf": "下载PDF",
-    "details": "详情"
+    "details": "详情",
+    "campaign_banner": "🔥 最新活动：分享你的“非完美数据”或失败实验，最高赢取 200 USD 奖励！点击查看详情 👉"
   },
   "Papers": {
     "Abstract": "摘要",

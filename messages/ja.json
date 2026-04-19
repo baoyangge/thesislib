@@ -14,7 +14,8 @@
     "Admin": "管理",
     "Log in": "ログイン",
     "Register": "登録",
-    "Log out": "ログアウト"
+    "Log out": "ログアウト",
+    "campaign": "懸賞論文募集"
   },
   "Home": {
     "hero_title": "研究を推進する",
@@ -26,7 +27,8 @@
     "no_papers": "現在利用可能な論文はありません。",
     "views": "閲覧数",
     "download_pdf": "PDFをダウンロード",
-    "details": "詳細"
+    "details": "詳細",
+    "campaign_banner": "🔥 新着イベント：「不完全なデータ」や失敗した実験を共有して、最高 200 USD の賞金を獲得しよう！詳細はこちら 👉"
   },
   "Papers": {
     "Abstract": "概要",

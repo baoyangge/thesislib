@@ -14,7 +14,8 @@
     "Admin": "Admin",
     "Log in": "Log in",
     "Register": "Register",
-    "Log out": "Log out"
+    "Log out": "Log out",
+    "campaign": "Call for Papers"
   },
   "Home": {
     "hero_title": "Advance Your Research",
@@ -26,7 +27,8 @@
     "no_papers": "No published papers available at the moment.",
     "views": "Views",
     "download_pdf": "Download PDF",
-    "details": "Details"
+    "details": "Details",
+    "campaign_banner": "🔥 New Event: Share your imperfect data or failed experiments to win up to 200 USD! Click to learn more 👉"
   },
   "Papers": {
     "Abstract": "Abstract",

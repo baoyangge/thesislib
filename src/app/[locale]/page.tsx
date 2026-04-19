@@ -25,6 +25,13 @@ export default async function Home() {
       {/* Top Navigation */}
       <Navbar user={user} />
 
+      {/* Campaign Banner */}
+      <div className="bg-orange-50 border-b border-orange-200 py-3 text-center">
+        <Link href="/app/campaign" className="text-orange-700 font-bold hover:underline hover:text-orange-800 transition-colors text-sm sm:text-base px-4 block">
+          {t("campaign_banner") || "New Campaign: Share your imperfect data and win up to 200 USD! Click here to learn more 👉"}
+        </Link>
+      </div>
+
       {/* Hero Section */}
       <div 
         className="bg-blue-900 py-20 px-4 sm:px-6 lg:px-8 text-center bg-cover bg-center bg-no-repeat relative"
