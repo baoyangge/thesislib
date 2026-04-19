@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import Navbar from "@/components/Navbar";
 import { requireUser } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 

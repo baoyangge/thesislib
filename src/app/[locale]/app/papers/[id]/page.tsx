@@ -2,6 +2,7 @@ export const dynamic = "force-dynamic";
 
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import Navbar from "@/components/Navbar";
 import { requireUser } from "@/lib/auth";
 import { signOut } from "@/lib/auth";
 import { notFound } from "next/navigation";
@@ -37,60 +38,7 @@ export default async function PaperDetailsPage({
   return (
     <div className="min-h-screen bg-white text-slate-900 font-sans">
       {/* Top Navigation */}
-      <nav className="border-b border-slate-200 bg-white sticky top-0 z-10">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 justify-between items-center">
-            <div className="flex items-center">
-              <Link href={`/${p.locale}`} className="text-2xl font-bold text-blue-900 tracking-tight">
-                FaultJournal
-              </Link>
-              <div className="hidden md:ml-10 md:flex md:space-x-8">
-                <Link href={`/${p.locale}/app/papers`} className="text-slate-600 hover:text-blue-900 px-3 py-2 text-sm font-medium transition-colors">
-                  {t("Publications")}
-                </Link>
-                {user && (
-                  <Link href={`/${p.locale}/app/papers?mine=1`} className="text-slate-600 hover:text-blue-900 px-3 py-2 text-sm font-medium transition-colors">
-                    {t("My Papers")}
-                  </Link>
-                )}
-                {user?.isAdmin && (
-                  <>
-                    <Link href={`/${p.locale}/app/papers/new`} className="text-slate-600 hover:text-blue-900 px-3 py-2 text-sm font-medium transition-colors">
-                      {t("Upload Paper")}
-                    </Link>
-                    <Link href={`/${p.locale}/admin`} className="text-slate-600 hover:text-blue-900 px-3 py-2 text-sm font-medium transition-colors">
-                      {t("Admin")}
-                    </Link>
-                  </>
-                )}
-              </div>
-            </div>
-            <div className="flex items-center space-x-4">
-              {!user ? (
-                <>
-                  <Link href={`/${p.locale}/auth/login`} className="text-sm font-medium text-slate-600 hover:text-blue-900">
-                    {t("Log in")}
-                  </Link>
-                  <Link href={`/${p.locale}/auth/signup`} className="text-sm font-medium bg-blue-900 text-white px-4 py-2 rounded hover:bg-blue-800 transition-colors">
-                    {t("Register")}
-                  </Link>
-                </>
-              ) : (
-                <div className="flex items-center space-x-4">
-                  <div className="text-sm text-slate-600">
-                    {user.email} {user.isAdmin && <span className="ml-1 text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">{t("Admin")}</span>}
-                  </div>
-                  <form action={async () => { "use server"; await signOut(); }}>
-                    <button type="submit" className="text-sm font-medium text-slate-600 hover:text-blue-900">
-                      {t("Log out")}
-                    </button>
-                  </form>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Navbar user={user} />
 
       <main className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-12">
         <article className="bg-white border border-slate-200 rounded-lg p-8 shadow-sm">
